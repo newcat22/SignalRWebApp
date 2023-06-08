@@ -15,11 +15,19 @@ namespace SignalRWebApp.Controllers
             _user = user;
         }
 
+        /// <summary>
+        /// 初始化数据库 
+        /// </summary>
+        /// <returns></returns>
         public bool CodeFirst()
         {
             return _user.CodeFirst();
         }
 
+        /// <summary>
+        /// 主界面
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             var userName = HttpContext.Session.GetString("userName");
@@ -32,10 +40,19 @@ namespace SignalRWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 登录页面
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Login()
         {
             return View();
         }
+
+        /// <summary>
+        /// 登出页面
+        /// </summary>
+        /// <returns></returns>
         public IActionResult LogOut()
         {
             // 清除Session和Cookie
