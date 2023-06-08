@@ -18,7 +18,7 @@ namespace SignalRWebApp.Hubs
         /// 发送消息
         /// </summary>
         /// <param name="user">用户名</param>
-        /// <param name="message">密码</param>
+        /// <param name="message">消息</param>
         /// <returns></returns>
         public async Task SendMessage(string user, string message)
         {
