@@ -68,7 +68,6 @@ namespace SignalRWebApp.Controllers
 
         public JsonResult GetMessages(int pageIndex, int pageSize)
         {
-
             return Json(_user.GetMessages(pageIndex, pageSize));
         }
     }
