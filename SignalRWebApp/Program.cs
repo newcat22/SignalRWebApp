@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using SignalRWebApp.Hubs;
 using SignalRWebApp.Service;
 using SqlSugar;
@@ -10,13 +11,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 // 添加Session服务
 builder.Services.AddSession();
+
+// 添加身份验证服务
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
+
+
 // 注册SqlSugar服务
 builder.Services.AddTransient<ISqlSugarClient>(provider =>
 {
     SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
     {
         ConnectionString = builder.Configuration.GetSection("conn").Value,//连接符字串
-        DbType = DbType.SqlServer, //数据库类型
+        DbType = DbType.Sqlite, //数据库类型
         IsAutoCloseConnection = true //不设成true要手动close
     });
     return db;
@@ -40,6 +47,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+// 在 app.UseRouting() 和 app.UseEndpoints() 之间添加 UseAuthentication 和 UseAuthorization 中间件
+app.UseAuthentication();
+
 
 app.MapControllerRoute(
     name: "default",
@@ -47,6 +57,8 @@ app.MapControllerRoute(
 
 //配置
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ChatOneFriend>("/chatOneFriend");
 // 使用Session
 app.UseSession();
 app.Run();
+

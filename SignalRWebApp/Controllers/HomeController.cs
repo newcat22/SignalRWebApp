@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using SignalRWebApp.Models;
 using SignalRWebApp.Service;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace SignalRWebApp.Controllers
 {
@@ -31,12 +34,30 @@ namespace SignalRWebApp.Controllers
         public IActionResult Index()
         {
             var userName = HttpContext.Session.GetString("userName");
+            var Id = HttpContext.Session.GetString("Id");
             if (string.IsNullOrEmpty(userName))
             {
                 //说明用户信息不存在，未登录
                 return Redirect("/Home/Login");
             }
+
+            // 创建Claims列表
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, Id)
+                // 根据需要添加更多 Claims
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties();
+
+            HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
             ViewBag.UserName = userName;
+            ViewBag.Id = Id;
             return View();
         }
 
@@ -74,7 +95,9 @@ namespace SignalRWebApp.Controllers
             {
                 return Redirect("/Home/Error");
             }
-            HttpContext.Session.SetString("userName", userInfo.Name);
+            HttpContext.Session.SetString("Id", userInfo.Id);
+            HttpContext.Session.SetString("userName", userInfo.Name);            
+            Response.Cookies.Append("Id", userInfo.Id);
             Response.Cookies.Append("userName", userInfo.Name);
             return Redirect("/");
         }
@@ -86,6 +109,86 @@ namespace SignalRWebApp.Controllers
         public JsonResult GetMessages(int pageIndex, int pageSize)
         {
             return Json(_user.GetMessages(pageIndex, pageSize));
+        }
+
+
+
+        /// <summary>
+        /// 查询全部用户
+        /// </summary>
+        /// <returns></returns>
+        public ResultBean selectUser()
+        {
+            List<UserInfo> list = _user.getUserInfos();
+            var result = new ResultBean
+            {
+                Success = true,
+                Message = "Operation successful.",
+                Data = list
+            };
+            return result;
+        }
+
+
+        /// <summary>
+        /// 按姓名查询用户
+        /// </summary>
+        /// <returns></returns>
+        public ResultBean findUserByName(String userName)
+        {
+            List<UserInfo> list = _user.getUserInfosByName(userName);
+            var result = new ResultBean
+            {
+                Success = true,
+                Message = "Operation successful.",
+                Data = list
+            };
+            return result;
+        }
+
+
+        /// <summary>
+        /// 添加好友
+        /// </summary>
+        /// <returns></returns>
+        public ResultBean addFriend(String userId, String friendId)
+        {
+            int insertResult = _user.addFriend(userId, friendId);
+            var result = new ResultBean
+            {
+                Success = true,
+                Message = "Operation successful.",
+                Data = insertResult
+            };
+            return result;
+        }
+
+
+        /// <summary>
+        /// 查询好友列表
+        /// </summary>
+        /// <param name="userId">用户id</param>
+        /// <returns></returns>        
+        public ResultBean selectFriend(String userId)
+        {
+            List<UserInfo> list = _user.getFriendInfos(userId);
+            var result = new ResultBean
+            {
+                Success = true,
+                Message = "Operation successful.",
+                Data = list
+            };
+            return result;
+        }
+
+        /// <summary>
+        /// 移除好友
+        /// </summary>
+        /// <returns></returns>
+        public String removeFriend(String userId, String friendId)
+        {
+
+            return "test";
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using SignalRWebApp.Models;
 using SqlSugar;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace SignalRWebApp.Service
 {
@@ -53,6 +54,47 @@ namespace SignalRWebApp.Service
         public List<UserMessage> GetMessages(int pageIndex, int pageSize)
         {
             return _db.Queryable<UserMessage>().ToOffsetPage(pageIndex, pageSize);
+        }
+
+        public List<UserInfo> getUserInfos()
+        {
+            List<UserInfo> list = _db.Queryable<UserInfo>().ToList();
+            return list;            
+        }
+
+
+        public List<UserInfo> getFriendInfos(string userId)
+        {
+            List<UserToFriend> userToFriends = _db.Queryable<UserToFriend>()
+                                      .Where(u => u.UserId == userId)
+                                      .ToList();
+            List<UserInfo> userInfos = new List<UserInfo>();
+            userToFriends.ForEach(u =>
+            {                
+                UserInfo userInfo = _db.Queryable<UserInfo>().First(x => x.Id == u.FriendId);
+                userInfos.Add(userInfo);
+            });
+            return userInfos;
+        }
+
+        public int addFriend(String userId, String friendId)
+        {
+            
+            UserToFriend newUserToFriend = new UserToFriend
+            {
+                UserId = userId,
+                FriendId = friendId
+            };
+            bool isInserted = _db.Insertable(newUserToFriend).ExecuteCommandIdentityIntoEntity();
+            return isInserted?1:0;
+        }
+
+        public List<UserInfo> getUserInfosByName(string userName)
+        {
+            List<UserInfo> userToFriends = _db.Queryable<UserInfo>()
+                          .Where(u => u.Name == userName)
+                          .ToList();
+            return userToFriends;
         }
     }
 }

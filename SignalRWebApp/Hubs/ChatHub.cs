@@ -32,7 +32,20 @@ namespace SignalRWebApp.Hubs
                 CreateTime = time
             };
             _db.Insertable(userMessage).ExecuteCommand();
+            
+            /*await Clients.User(user).SendAsync("ReceiveMessage", message);*/
             await Clients.All.SendAsync("ReceiveMessage", user, message, time.ToString());
+            /* await Clients.All.SendAsync("ReceiveMessage", user, message, time.ToString());*/
         }
+
+
+        public override async Task OnConnectedAsync()
+        {
+            var userId = Context.User.Identity.Name; // Replace this with actual user ID retrieval logic
+            await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+
+            await base.OnConnectedAsync();
+        }
+
     }
 }
