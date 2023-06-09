@@ -28,7 +28,7 @@ namespace SignalRWebApp.Controllers
         }
 
         /// <summary>
-        /// 主界面
+        /// 主界面：默认界面：WPF前后端分离不调，直接调用Login登录即可
         /// </summary>
         /// <returns></returns>
         public IActionResult Index()
@@ -70,8 +70,9 @@ namespace SignalRWebApp.Controllers
             return View();
         }
 
+        
         /// <summary>
-        /// 登出页面
+        /// 登出页面：WPF前后端分离不调
         /// </summary>
         /// <returns></returns>
         public IActionResult LogOut()
@@ -82,6 +83,7 @@ namespace SignalRWebApp.Controllers
             // 重定向到登录页
             return Redirect("/Home/Login");
         }
+
         /// <summary>
         /// 登录
         /// </summary>
@@ -106,6 +108,12 @@ namespace SignalRWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 历史消息，WPF前后端分离不调
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         public JsonResult GetMessages(int pageIndex, int pageSize)
         {
             return Json(_user.GetMessages(pageIndex, pageSize));
