@@ -20,7 +20,6 @@ namespace SignalRWebApp.Hubs
         public override async Task OnConnectedAsync()
         {
             string userId = Context.GetHttpContext().Request.Headers["Id"];
-            //var cookies = Context.GetHttpContext().Request.Cookies;
             // Assume you have the user's ID accessible when they connect
             //string userId = Context.User.Identity.Name; // Replace this with actual user ID retrieval logic
             UserConnectionMap.TryAdd(userId, Context.ConnectionId);
