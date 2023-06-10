@@ -14,7 +14,13 @@ namespace SignalRWebApp.Service
         /// <returns></returns>
         UserInfo GetUser(string name, string password);
 
-
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        UserInfo login(string name, string password);
 
         /// <summary>
         /// 获取历史消息

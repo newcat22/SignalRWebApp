@@ -84,7 +84,7 @@ namespace SignalRWebApp.Controllers
                 Message = "登录失败",
                 Data = "登录失败"
             };
-            UserInfo userInfo = _user.GetUser(name, password);
+            UserInfo userInfo = _user.login(name, password);
             if (string.IsNullOrEmpty(userInfo.Id))
             {
                 return result;
@@ -172,13 +172,20 @@ namespace SignalRWebApp.Controllers
         /// <returns></returns>
         public ResultBean registerUser(string name, string password)
         {
-            UserInfo userInfo = _user.GetUser(name, password);
             var result = new ResultBean
             {
-                Success = true,
-                Message = "Operation successful.",
-                Data = userInfo
+                Success = false,
+                Message = "用户已存在",
+                Data = null
             };
+            UserInfo userInfo = _user.GetUser(name, password);
+            if (string.IsNullOrEmpty(userInfo.Id))
+            {
+                return result;
+            }
+            result.Success = true;
+            result.Message = "注册成功";
+            result.Data = userInfo;
             return result;
         }
 

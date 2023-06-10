@@ -33,7 +33,7 @@ namespace SignalRWebApp.Service
         public UserInfo GetUser(string name, string password)
         {
             //查询用户是否存在
-            UserInfo userInfo = _db.Queryable<UserInfo>().First(x => x.Name == name);
+            UserInfo userInfo = _db.Queryable<UserInfo>().First(x => x.Name == name);            
             if (userInfo == null)
             {
                 UserInfo newInfo = new UserInfo()
@@ -44,11 +44,27 @@ namespace SignalRWebApp.Service
                 };
                 return _db.Insertable(newInfo).ExecuteReturnEntity();
             }
-            else if (userInfo.Password != password)
+            else
             {
                 return new UserInfo();
             }
             return userInfo;
+        }
+
+        public UserInfo login(string name, string password)
+        {
+            //查询用户是否存在
+            UserInfo userInfo = _db.Queryable<UserInfo>().Where(x => x.Name == name && x.Password == password).First();
+            if (userInfo == null)
+            {
+                return new UserInfo();
+            }
+            else 
+            {
+                return userInfo;
+            }
+            return userInfo;
+
         }
 
         public List<UserMessage> GetMessages(int pageIndex, int pageSize)
@@ -96,5 +112,7 @@ namespace SignalRWebApp.Service
                           .ToList();
             return userToFriends;
         }
+
+
     }
 }
