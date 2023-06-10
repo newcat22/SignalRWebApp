@@ -62,7 +62,7 @@ namespace SignalRWebApp.Controllers
         }
 
         /// <summary>
-        /// 登录页面
+        /// 登录页面：WPF前后端分离不调
         /// </summary>
         /// <returns></returns>
         public IActionResult Login()
@@ -75,10 +75,45 @@ namespace SignalRWebApp.Controllers
         /// 登录页面
         /// </summary>
         /// <returns></returns>
-        public IActionResult loginUser(string name, string password)
+        public ResultBean loginUser(string name, string password)
         {
-            return View();
+
+            var result = new ResultBean
+            {
+                Success = false,
+                Message = "登录失败",
+                Data = "登录失败"
+            };
+            UserInfo userInfo = _user.GetUser(name, password);
+            if (string.IsNullOrEmpty(userInfo.Id))
+            {
+                return result;
+            }
+            result.Success = true;
+            result.Message = "登录成功";
+            result.Data = userInfo;
+            
+            //设置用户id到session和cookies中
+            HttpContext.Session.SetString("Id", userInfo.Id);            
+            Response.Cookies.Append("Id", userInfo.Id);
+
+            //将用户信息放入Claims供 singalR使用
+            // 创建Claims列表
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userInfo.Id)
+                // 根据需要添加更多 Claims
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties();
+            HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            return result;
         }
+
 
 
 
@@ -96,7 +131,7 @@ namespace SignalRWebApp.Controllers
         }
 
         /// <summary>
-        /// 登录
+        /// 登录：WPF前后端分离不调
         /// </summary>
         /// <param name="name"></param>
         /// <param name="password"></param>
@@ -137,12 +172,12 @@ namespace SignalRWebApp.Controllers
         /// <returns></returns>
         public ResultBean registerUser(string name, string password)
         {
-            List<UserInfo> list = _user.getUserInfos();
+            UserInfo userInfo = _user.GetUser(name, password);
             var result = new ResultBean
             {
                 Success = true,
                 Message = "Operation successful.",
-                Data = list
+                Data = userInfo
             };
             return result;
         }
