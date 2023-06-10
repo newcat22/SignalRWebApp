@@ -16,6 +16,17 @@ builder.Services.AddSession();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DynamicCorsPolicy", builder =>
+    {
+        builder.SetIsOriginAllowed(origin => true) // allow any origin
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials(); // allow credentials
+    });
+});
+
 
 // 注册SqlSugar服务
 builder.Services.AddTransient<ISqlSugarClient>(provider =>
@@ -60,5 +71,8 @@ app.MapHub<ChatHub>("/chatHub");
 app.MapHub<ChatOneFriend>("/chatOneFriend");
 // 使用Session
 app.UseSession();
+
+app.UseCors("DynamicCorsPolicy");
+
 app.Run();
 
