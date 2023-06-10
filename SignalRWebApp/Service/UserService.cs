@@ -81,15 +81,21 @@ namespace SignalRWebApp.Service
 
         public List<UserInfo> getFriendInfos(string userId)
         {
-            List<UserToFriend> userToFriends = _db.Queryable<UserToFriend>()
+            List<UserToFriend> userToFriends = new List<UserToFriend>();
+            userToFriends = _db.Queryable<UserToFriend>()
                                       .Where(u => u.UserId == userId)
                                       .ToList();
             List<UserInfo> userInfos = new List<UserInfo>();
-            userToFriends.ForEach(u =>
-            {                
-                UserInfo userInfo = _db.Queryable<UserInfo>().First(x => x.Id == u.FriendId);
-                userInfos.Add(userInfo);
-            });
+            if (userToFriends.Count > 0) {
+                userToFriends.ForEach(u =>
+                {
+                    UserInfo userInfo = _db.Queryable<UserInfo>().First(x => x.Id == u.FriendId);
+                    userInfos.Add(userInfo);
+                });
+            }else
+            {
+                userInfos = null;
+            }
             return userInfos;
         }
 
@@ -113,6 +119,12 @@ namespace SignalRWebApp.Service
             return userToFriends;
         }
 
+        public int removeFriend(string userId, string friendId)
+        {
 
+
+
+            throw new NotImplementedException();
+        }
     }
 }

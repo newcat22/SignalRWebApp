@@ -5,6 +5,7 @@ using SignalRWebApp.Models;
 using SignalRWebApp.Service;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Collections.Generic;
 
 namespace SignalRWebApp.Controllers
 {
@@ -248,13 +249,19 @@ namespace SignalRWebApp.Controllers
         /// <returns></returns>        
         public ResultBean selectFriend(String userId)
         {
-            List<UserInfo> list = _user.getFriendInfos(userId);
             var result = new ResultBean
             {
-                Success = true,
+                Success = false,
                 Message = "Operation successful.",
-                Data = list
+                Data = null
             };
+            List<UserInfo> list = _user.getFriendInfos(userId);
+            if (list == null)
+            {
+                return result;
+            }
+            result.Success = true;
+            result.Data = list;
             return result;
         }
 

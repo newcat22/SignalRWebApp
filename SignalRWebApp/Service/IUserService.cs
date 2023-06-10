@@ -53,5 +53,12 @@ namespace SignalRWebApp.Service
 
         List<UserInfo> getUserInfosByName(String userName);
 
+        /// <summary>
+        /// 添加好友
+        /// </summary>
+        /// <param name="user1"></param>
+        /// <param name="user2"></param>
+        /// <returns></returns>
+        int removeFriend(String userId, String friendId);
     }
 }
