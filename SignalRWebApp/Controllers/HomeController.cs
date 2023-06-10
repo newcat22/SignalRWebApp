@@ -70,7 +70,18 @@ namespace SignalRWebApp.Controllers
             return View();
         }
 
-        
+
+        /// <summary>
+        /// 登录页面
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult loginUser(string name, string password)
+        {
+            return View();
+        }
+
+
+
         /// <summary>
         /// 登出页面：WPF前后端分离不调
         /// </summary>
@@ -119,6 +130,22 @@ namespace SignalRWebApp.Controllers
             return Json(_user.GetMessages(pageIndex, pageSize));
         }
 
+
+        /// <summary>
+        /// 注册用户
+        /// </summary>
+        /// <returns></returns>
+        public ResultBean registerUser(string name, string password)
+        {
+            List<UserInfo> list = _user.getUserInfos();
+            var result = new ResultBean
+            {
+                Success = true,
+                Message = "Operation successful.",
+                Data = list
+            };
+            return result;
+        }
 
 
         /// <summary>
