@@ -3,8 +3,8 @@
 namespace SignalRWebApp.Models
 {
     public class UserToFriend
-    {
-        [SugarColumn(IsPrimaryKey = true)]
+    {        
+        [SqlSugar.SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
         public string UserId { get; set; }
         public string FriendId  { get; set; }

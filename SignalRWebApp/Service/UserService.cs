@@ -101,14 +101,21 @@ namespace SignalRWebApp.Service
 
         public int addFriend(String userId, String friendId)
         {
-            
+
             UserToFriend newUserToFriend = new UserToFriend
             {
                 UserId = userId,
                 FriendId = friendId
             };
-            bool isInserted = _db.Insertable(newUserToFriend).ExecuteCommandIdentityIntoEntity();
-            return isInserted?1:0;
+
+            UserToFriend newUserToFriendOxd = new UserToFriend
+            {
+                UserId = friendId,
+                FriendId = userId
+            };
+            int isInserted = _db.Insertable(newUserToFriend).ExecuteCommand();
+            int isInserted1 = _db.Insertable(newUserToFriendOxd).ExecuteCommand();
+            return isInserted;
         }
 
         public List<UserInfo> getUserInfosByName(string userName)
